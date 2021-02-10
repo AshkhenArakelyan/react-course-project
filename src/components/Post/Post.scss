@@ -1,0 +1,15 @@
+@import '~styles/root';
+
+.app-post {
+    border: 1px solid $primary-color;
+    padding: 10px 20px;
+    &__title {
+        color: $primary-color;
+        font-weight: bold;
+        font-size: $h2-font-size;
+    }
+    &__body {
+        color: $secondary-color;
+        font-size: $h5-font-size;
+    }
+}
