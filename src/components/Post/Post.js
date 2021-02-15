@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import './Post.scss';
 
-const Post = ({post, className=''}) => {
+const Post = ({post, className}) => {
     return (
         <div className={`app-post ${className}`}>
             <h2 className="app-post__title">{post.title}</h2>

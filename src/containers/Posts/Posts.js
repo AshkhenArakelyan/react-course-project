@@ -5,14 +5,19 @@ import service from 'api/service';
 
 import './Posts.scss';
 
-class Posts extends Component {
+import loadingGif from 'assets/loading.gif';
 
+class Posts extends Component {
+    limit = 12;
     state = {
-        posts: [],
+        posts: null,
+        start: 0,
+        hasMore: true,
+        loading: false
     }
    
     componentDidMount() {
-        service.getAllPosts()
+        service.getPosts(this.state.start, this.limit)
         .then(resJson => {
             this.setState({
                 posts: resJson,
@@ -60,21 +65,60 @@ class Posts extends Component {
             })
         })
     }
+    deletePost = (id) => {
+        service.deletePost(id)
+        .then(data => {
+            this.setState({
+                posts: this.state.posts.filter((el) => {
+                    return el.id !== id;
+                })
+            })
+        })
+    }
+    loadMore = () => {
+        const newStart = this.state.start + this.limit;
+        this.setState({
+            start: newStart,
+            loading: true
+        })
+        service.getPosts(newStart)
+        .then(resJson => {
+            console.log(resJson);
+            this.setState({
+                posts: [...this.state.posts, ...resJson],
+                hasMore: resJson.length < this.limit ? false : true,
+                loading: false
+            })
+        })
+        .catch(err => {
+
+        })
+    }
     render() {
+        const { loading, hasMore, posts} = this.state;
         return (
             <div className="app-posts">
+                {posts ? 
+                    <>
+                        <div className="app-posts__container">
+                            {
+                                posts.map(post => {
+                                    return  <Post 
+                                                key={post.id}
+                                                post={post} 
+                                                className="app-posts__container__post"
+                                            />
+                                })
+                            }
+                        </div> 
+                        {hasMore ?  <button onClick={this.loadMore} disabled={loading}>{loading ? <img src={loadingGif} alt="loading-gif" className="button-loading" /> :'Load more'}</button>: null}
+                    </> :
+                    <img src={loadingGif} alt="loading-gif" className="app-posts__loading-image" />
+                }
                 <button onClick={this.getPost}>Get post</button>
                 <button onClick={this.createPost}>Create Post</button>
                 <button onClick={this.updatePost}>Update Post</button>
-                {
-                    this.state.posts.map(post => {
-                        return <Post 
-                                    key={post.id}
-                                    post={post} 
-                                    className="app-posts__post"
-                                />
-                    })
-                }
+                <button onClick={() => this.deletePost(2)}>Delete Post</button>
             </div>
         )
     }

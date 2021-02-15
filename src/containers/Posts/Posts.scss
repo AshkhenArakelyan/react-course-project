@@ -1,7 +1,28 @@
 @import '~styles/root';
 
 .app-posts {
-    &__post {
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+    &__container {
+        display: grid;
+        grid-template-columns: auto auto auto auto;
+        &__post {
+            margin: 5px;
+        }
+    }
+    &__loading-image {
+        width: 200px;
+    }
+    .button-loading {
+        height: 30px;
+        width: auto;
+    }
+    button {
+        display: block;
+        width: 200px;
+        height: 50px;
+        font-size: 20px;
         margin-bottom: 20px;
     }
 }

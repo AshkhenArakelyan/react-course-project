@@ -21,6 +21,13 @@ class Service {
     getAllPosts = () => {
         return this._request('GET', '/posts')
     }
+    getPosts = (start, limit = 12) => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                return resolve(this._request('GET', `/posts?_start=${start}&_limit=${limit}&_delay=3000`))
+            }, 3000)
+        })
+    }
     getPost = (id) => {
         return this._request('GET', `/posts/${id}`)
     }
@@ -29,6 +36,9 @@ class Service {
     }
     updatePost = (id, data) => {
         return this._request('PATCH', `/posts/${id}`, data)
+    }
+    deletePost = (id) => {
+        return this._request('DELETE', `/posts/${id}`)
     }
 }
 
