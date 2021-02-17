@@ -99,7 +99,7 @@ class Posts extends Component {
         return (
             <div className="app-posts">
                 {posts ? 
-                    <>
+                    <div>
                         <div className="app-posts__container">
                             {
                                 posts.map(post => {
@@ -112,7 +112,7 @@ class Posts extends Component {
                             }
                         </div> 
                         {hasMore ?  <button onClick={this.loadMore} disabled={loading}>{loading ? <img src={loadingGif} alt="loading-gif" className="button-loading" /> :'Load more'}</button>: null}
-                    </> :
+                    </div> :
                     <img src={loadingGif} alt="loading-gif" className="app-posts__loading-image" />
                 }
                 <button onClick={this.getPost}>Get post</button>
