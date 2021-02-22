@@ -1,0 +1,14 @@
+.app-post-item {
+    margin: 20px 0;
+    &__edit-modal {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        &__inner {
+            width: 600px;
+            height: auto;
+            padding: 20px;
+            background-color: #fff;
+        }
+    }
+}

@@ -1,10 +1,10 @@
 class Service {
     constructor() {
-        this.baseUrl = 'https://jsonplaceholder.typicode.com'
+        this.baseUrl = 'https://react-course-project-5add1-default-rtdb.firebaseio.com'
     }
 
     _request = (method, url, data = null) => {
-        return fetch(`${this.baseUrl}${url}`, {
+        return fetch(`${this.baseUrl}${url}.json`, {
             method,
             headers: data ? {'Content-Type': 'application/json'} : {},
             body: data ? JSON.stringify(data) : null,

@@ -1,14 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import NavLink from 'components/NavLink/NavLink';
 
 class Header extends React.Component {
     render () {
         return (
-            <ul>
-                <li><Link to="/">Home</Link></li>
-                <li><Link to="/posts">Posts</Link></li>
-                <li><Link to="/todos">Todos</Link></li>                               
-            </ul>
+            <nav>
+                <ul>
+                    <li><NavLink to="/">Home</NavLink></li>
+                    <li><NavLink to="/posts">Posts</NavLink></li>
+                    <li><NavLink to="/todos">Todos</NavLink></li>                               
+                </ul>
+            </nav>
         )
     }
 }

@@ -6,6 +6,7 @@ import service from 'api/service';
 import './Posts.scss';
 
 import loadingGif from 'assets/loading.gif';
+import fbService from 'api/fbService';
 
 class Posts extends Component {
     limit = 12;
@@ -17,14 +18,22 @@ class Posts extends Component {
     }
    
     componentDidMount() {
-        service.getPosts(this.state.start, this.limit)
-        .then(resJson => {
-            this.setState({
-                posts: resJson,
-            })
-        })
-        .catch(err => {
+        // service.getPosts(this.state.start, this.limit)
+        // service.getAllPosts()
 
+        // .then(resJson => {
+        //     this.setState({
+        //         posts: resJson,
+        //     })
+        // })
+        // .catch(err => {
+
+        // })
+        fbService.getAllPosts()
+        .then(data => {
+            this.setState({
+                posts: data,
+            })
         })
     }
     getPost = () => {
@@ -107,6 +116,7 @@ class Posts extends Component {
                                                 key={post.id}
                                                 post={post} 
                                                 className="app-posts__container__post"
+                                                link={true}
                                             />
                                 })
                             }
