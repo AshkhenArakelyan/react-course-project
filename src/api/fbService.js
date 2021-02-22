@@ -3,9 +3,9 @@ import 'firebase/database';
 
 import firebaseConfig from './firebaseConfig';
 
-firebase.initializeApp(firebaseConfig);
 class FbService {
     constructor() {
+        firebase.initializeApp(firebaseConfig);
     }
 
     getAllPosts = async () => {
