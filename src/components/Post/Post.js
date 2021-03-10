@@ -2,17 +2,25 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom'
 import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { Button } from '@material-ui/core';
 
 import Link from 'components/Link/Link';
 import './Post.scss';
 
-const Post = ({post, className = '', link = false, edit = () => {} }) => {
+const Post = ({ post, className = '', link = false, edit = () => {}, remove = () =>{} }) => {
+    const removeHandler = (e) => {
+        e.preventDefault();
+        remove();
+    }
     const Wrapper =({ children }) => {
         const postClassName = `app-post ${className}`;
         return link ?
         <Link to={`/posts/${post.id}`} className={postClassName}>
             {children}
+            <Button variant="contained" className="app-posts__delete-button" onClick={removeHandler}>
+                <DeleteIcon />
+            </Button>
         </Link> :
         <div className={postClassName}>
             {children}
@@ -36,8 +44,10 @@ Post.propTypes = {
         body: PropTypes.string.isRequired,
         id: PropTypes.number.isRequired,
         userId: PropTypes.number,
-        edit: PropTypes.func
     }),
     className: PropTypes.string,
+    edit: PropTypes.func,
+    remove: PropTypes.func,
+
 }
 export default withRouter(Post)

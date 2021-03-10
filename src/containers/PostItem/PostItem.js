@@ -7,6 +7,7 @@ import Post from 'components/Post/Post';
 
 import './PostItem.scss';
 import loadingGif from 'assets/loading.gif';
+import fbService from 'api/fbService';
 
 class PostItem extends Component {
     constructor(props) {
@@ -42,7 +43,7 @@ class PostItem extends Component {
     }
 
     savePost = () => {
-        service.updatePost(this.state.postItem.id, {
+        fbService.updatePost({
             ...this.state.postItem,
             title: this.state.titleValue,
             body: this.state.bodyValue

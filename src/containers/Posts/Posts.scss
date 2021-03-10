@@ -1,15 +1,17 @@
 @import '~styles/root';
 
 .app-posts {
-    // display: flex;
-    // justify-content: center;
-    // align-items: center;
     &__container {
         display: grid;
         grid-template-columns: auto auto auto auto;
         &__post {
             margin: 5px;
+            border: 1px solid $primary-color;
+            padding: 10px 20px;
         }
+    }
+    &__delete-button {
+        background-color: #FA7E1E;
     }
     &__loading-image {
         width: 200px;
