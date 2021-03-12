@@ -9,11 +9,11 @@ import { Button } from '@material-ui/core';
 
 import loadingGif from 'assets/loading.gif';
 import fbService from 'api/fbService';
+import { AppContext } from 'context/AppContext';
 
 class Posts extends Component {
     limit = 3;
     state = {
-        posts: null,
         start: 0,
         hasMore: true,
         loading: false
@@ -129,13 +129,13 @@ class Posts extends Component {
     removePost = (id) => {
         fbService.removePost(id)
         .then(data => {
+            console.log(data);
+            console.log(id);
             this.setState({
-                posts: this.state.posts.filter((el) => {
-                    return el.id !== id;
-                })
+                posts: data
             })
+
         })
-        fbService.getAllPosts();
     }
     
     render() {
@@ -161,12 +161,7 @@ class Posts extends Component {
                     </div> :
                     <img src={loadingGif} alt="loading-gif" className="app-posts__loading-image" />
                 }
-                {/* <button onClick={this.getPost}>Get post</button> */}
-                {/* <button onClick={this.createPost}>Create Post</button> */}
                 <Button variant="contained" onClick={this.createPost}>Create Post</Button>
-
-                {/* <button onClick={this.updatePost}>Update Post</button>
-                <button onClick={() => this.deletePost(2)}>Delete Post</button> */}
             </div>
         )
     }

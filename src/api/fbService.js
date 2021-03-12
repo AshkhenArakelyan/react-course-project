@@ -52,19 +52,17 @@ class FbService {
         const postRef = await firebase.database().ref(`posts/${id}`);
         postRef.remove();
         
-        const posts = await this.getAllPosts()
-        await firebase.database().ref('posts')
-        .set(posts.map((el, idx) => {
+        const posts = await this.getAllPosts();
+        const newPosts = posts.map((el, idx) => {
             return {
                 ...el,
                 id: idx
             }
-        }))
-        const newPosts = await firebase.database().ref('posts').get();
-        const newData = newPosts.toJSON();
-        console.log(posts);
-        console.log(newPosts);
-        return Object.values(newPosts);
+        })
+        await firebase.database().ref('posts')
+        .set(newPosts);
+        return newPosts;
+        
     }
     createPost = async (data) => {
         const res = await firebase.database()
@@ -88,8 +86,8 @@ class FbService {
         return newItem;
     }
     fromResToUser = (res) => {
-        const {uid, email, displayName, photoUrl} = res.user;
-        return {uid, email, displayName, photoUrl};
+        const {uid, email, displayName, photoURL} = res.user;
+        return {uid, email, displayName, photoURL};
     }
     login = async (credentials) => {
         const res = await firebase.auth().signInWithEmailAndPassword(credentials.email, credentials.password);
@@ -98,7 +96,15 @@ class FbService {
     }
     signup = async (credentials) => {
         const res = await firebase.auth().createUserWithEmailAndPassword(credentials.email, credentials.password);
+        const user = firebase.auth().currentUser;
+        await user.updateProfile({
+            displayName: credentials.name,
+        })
+        console.log(res)
         return this.fromResToUser(res);
+    }
+    logout = async () => {
+        await firebase.auth().signOut()
     }
 }
 

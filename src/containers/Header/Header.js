@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import NavLink from 'components/NavLink/NavLink';
 
 import logo from 'assets/logo.webp';
 
 import './Header.scss';
-import { ExpandLessOutlined } from '@material-ui/icons';
+import { AppContext } from 'context/AppContext';
+
 
 const headerLinks = [
     {
@@ -19,23 +20,24 @@ const headerLinks = [
         title: 'Todos',
         to: '/todos'
     },
-    {
-        title: 'Auth',
-        to: '/auth'
-    },
+    
 ]
-class Header extends React.Component {
-    render () {
-        return (
-            <nav className="app-nav">
-                <ul className="app-nav__list">
-                    {headerLinks.map(el => {
-                        return <li key={el.title}><NavLink to={el.to}>{el.title}</NavLink></li>
-                    })}
-                </ul>
-            </nav>
-        )
-    }
+const Header = () => {
+    const context = useContext(AppContext);
+    console.log(context.state.user);
+    return (
+        <nav className="app-nav">
+            <ul className="app-nav__list">
+                {headerLinks.map(el => {
+                    return <li key={el.title}><NavLink to={el.to}>{el.title}</NavLink></li>
+                })}
+                {!context.state.user ?
+                    <li key={'auth'}><NavLink to='/auth'>Auth</NavLink></li> : 
+                    <li key={'profile'}><NavLink to='/profile'>Profile</NavLink></li>
+                }
+            </ul>
+        </nav>
+    )
 }
 
 export default Header;

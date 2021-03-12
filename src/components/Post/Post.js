@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom'
 import EditIcon from '@material-ui/icons/Edit';
@@ -6,6 +6,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { Button } from '@material-ui/core';
 
 import Link from 'components/Link/Link';
+import { AppContext } from 'context/AppContext';
 import './Post.scss';
 
 const Post = ({ post, className = '', link = false, edit = () => {}, remove = () =>{} }) => {
@@ -14,13 +15,19 @@ const Post = ({ post, className = '', link = false, edit = () => {}, remove = ()
         remove();
     }
     const Wrapper =({ children }) => {
+        const context = useContext(AppContext);
+
         const postClassName = `app-post ${className}`;
         return link ?
         <Link to={`/posts/${post.id}`} className={postClassName}>
             {children}
-            <Button variant="contained" className="app-posts__delete-button" onClick={removeHandler}>
-                <DeleteIcon />
-            </Button>
+            { context.state.user ? 
+                <Button variant="contained" className="app-posts__delete-button" onClick={removeHandler}>
+                    <DeleteIcon />
+                </Button> :
+                null
+            }
+            
         </Link> :
         <div className={postClassName}>
             {children}
