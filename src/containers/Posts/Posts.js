@@ -10,42 +10,35 @@ import { Button } from '@material-ui/core';
 import loadingGif from 'assets/loading.gif';
 import fbService from 'api/fbService';
 import { AppContext } from 'context/AppContext';
+import { actionTypes } from 'context/actionTypes';
+import PostModal from 'components/PostModal/PostModal';
 
 class Posts extends Component {
     limit = 3;
     state = {
         start: 0,
         hasMore: true,
-        loading: false
+        loading: false,
+        isModalOpen: false,
+        titleValue: '',
+        bodyValue: '',
     }
-   
+
+    static contextType = AppContext
+
     componentDidMount() {
-        // console.log('hasMore: ', this.state.hasMore)
-
-        // service.getPosts(this.state.start, this.limit)
-        // service.getAllPosts()
-
-        // .then(resJson => {
-        //     this.setState({
-        //         posts: resJson,
-        //     })
-        // })
-        // .catch(err => {
-
-        // })
-        fbService.getPosts()
-        .then(data => {
-            this.setState({
-                posts: data,
-                // hasMore: data.length == 0 ? false : true
+        if(!this.context.state.posts) {
+            fbService.getPosts(this.state.start, this.limit)
+            .then(data => {
+                this.context.dispatch({type: actionTypes.SET_POSTS, payload: { posts: data }})
             })
-        })
+        }
     }
     getPost = () => {
         fbService.getPost()
         .then(resJson => {
             this.setState({
-                posts: [...this.state.posts, resJson] // two children with the same key
+                posts: [...this.state.posts, resJson]
             })
         })
         .catch(err => {
@@ -66,18 +59,20 @@ class Posts extends Component {
                 posts: newPost
             })
         })
-        // fbService.updatePost()
     }
     createPost = () => {
-        fbService.createPost({
-            title: 'My post title',
-            body: 'My post body',
+        const createdPost = {
+            title: this.state.titleValue,
+            body: this.state.bodyValue,
             userId: 1
-        })
-        .then(resJson => {
-            this.setState({
-                posts: [...this.state.posts, resJson]
+        }
+        fbService.createPost(createdPost)
+        .then(data => {
+            this.context.dispatch({
+                type: actionTypes.CREATE_POST,
+                payload: {post: data}
             })
+            this.toggleModal();
         })
     }
     
@@ -92,32 +87,17 @@ class Posts extends Component {
         })
     }
     loadMore = () => {
-        // const newStart = this.state.start + this.limit;
-        // this.setState({
-        //     start: newStart,
-        //     loading: true
-        // })
-        // service.getPosts(newStart)
-        // .then(resJson => {
-        //     console.log(resJson);
-        //     this.setState({
-        //         posts: [...this.state.posts, ...resJson],
-        //         hasMore: resJson.length < this.limit ? false : true,
-        //         loading: false
-        //     })
-        // })
         const newStart = this.state.start + this.limit + 1;
         this.setState({
             start: newStart,
             loading: true
         })
         fbService.getPosts(newStart, newStart+this.limit)
-        .then(resJson => {            
+        .then(data => {            
             const newLimit = this.limit + 1;
-            // console.log(newLimit);
+            this.context.dispatch({type: actionTypes.LOAD_MORE_POSTS, payload: {posts: data}})
             this.setState({
-                posts: [...this.state.posts, ...resJson],
-                hasMore: resJson.length < newLimit ? false : true,  ///// nayel
+                hasMore: data.length < newLimit ? false : true,
                 loading: false
             })
         })
@@ -137,32 +117,65 @@ class Posts extends Component {
 
         })
     }
-    
+    toggleModal = () => {
+        this.setState({
+            isModalOpen: !this.state.isModalOpen
+        })
+    }
+    changeTitle = (e) => {
+        this.setState({
+            titleValue: e.target.value
+        })
+    }
+
+    changeBody = (e) => {
+        this.setState({
+            bodyValue: e.target.value
+        })
+    }
     render() {
-        const { loading, hasMore, posts} = this.state;
+        const { loading, hasMore, isModalOpen, bodyValue, titleValue} = this.state;
+        const { state: {posts} } = this.context
         return (
-            <div className="app-posts">
-                {posts ? 
-                    <div>
-                        <div className="app-posts__container">
-                            {
-                                posts.map(post => {
-                                    return  <Post 
-                                                key={post.id}
-                                                post={post} 
-                                                className="app-posts__container__post"
-                                                link={true}
-                                                remove={() => this.removePost(post.id)}
-                                            />
-                                })
-                            }
-                        </div> 
-                        {hasMore ?  <Button variant="contained" onClick={this.loadMore} disabled={loading}>{loading ? <img src={loadingGif} alt="loading-gif" className="button-loading" /> :'Load more'}</Button>: null}
-                    </div> :
-                    <img src={loadingGif} alt="loading-gif" className="app-posts__loading-image" />
-                }
-                <Button variant="contained" onClick={this.createPost}>Create Post</Button>
-            </div>
+        <AppContext.Consumer>
+            {context => {
+                const {state: {posts} } = context;
+                return (
+                    <div className="app-posts">
+                        {posts ? 
+                            <div>
+                                <div className="app-posts__container">
+                                    {
+                                        posts.map(post => {
+                                            return  <Post 
+                                                        key={post.id}
+                                                        post={post} 
+                                                        className="app-posts__container__post"
+                                                        link={true}
+                                                        remove={() => this.removePost(post.id)}
+                                                    />
+                                        })
+                                    }
+                                </div> 
+                                {hasMore ?  <Button variant="contained" onClick={this.loadMore} disabled={loading}>{loading ? <img src={loadingGif} alt="loading-gif" className="button-loading" /> :'Load more'}</Button>: null}
+                            </div> :
+                            <img src={loadingGif} alt="loading-gif" className="app-posts__loading-image" />
+                        }
+                        <Button variant="contained" onClick={this.toggleModal}>Create Post</Button>
+                        <PostModal 
+                            action={this.createPost}
+                            bodyValue={bodyValue}
+                            titleValue={titleValue}
+                            changeTitle={this.changeTitle}
+                            changeBody={this.changeBody}
+                            onClose={this.toggleModal}
+                            isOpen={isModalOpen}
+                            buttonTitle="Create"
+                        />
+                    </div>
+                )
+            }}
+        </AppContext.Consumer>
         )
     }
 }

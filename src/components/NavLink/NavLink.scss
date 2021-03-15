@@ -6,10 +6,13 @@
     text-decoration: none;
     text-transform: uppercase;
     font-family: 'Courier New', Courier, monospace;
-    &:first-of-type {
-        margin-right: 2em;
+    transition: .2s all;
+    &:hover {
+        color: #fbeeac;
+        text-shadow: 0.5px 0.5px #fbeeac;
     }
 }
 .app-nav-link--active {
-    color: #D3661C;
+    color: #fbeeac;
+    text-shadow: 0.5px 0.5px #fbeeac;
 }

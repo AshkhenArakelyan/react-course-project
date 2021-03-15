@@ -31,10 +31,11 @@ const Post = ({ post, className = '', link = false, edit = () => {}, remove = ()
         </Link> :
         <div className={postClassName}>
             {children}
+            { context.state.user ? 
             <Button variant="contained" color="primary" onClick={edit}>
                 <EditIcon />
-            </Button>
-           
+            </Button> :
+            null }
         </div>
     }
     return (

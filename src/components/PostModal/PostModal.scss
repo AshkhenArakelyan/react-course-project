@@ -1,0 +1,11 @@
+.app-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &__inner {
+        width: 600px;
+        height: auto;
+        padding: 20px;
+        background-color: #fff;
+    }
+}

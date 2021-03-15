@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import NavLink from 'components/NavLink/NavLink';
 
-import logo from 'assets/logo.webp';
+import logo from 'assets/logo.png';
 
 import './Header.scss';
 import { AppContext } from 'context/AppContext';

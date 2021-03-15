@@ -1,0 +1,21 @@
+.app-auth {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+    justify-content: center;
+    padding: 35px 30px 40px;
+    margin: 0 auto;
+    position: relative;
+    border-radius: 10px;
+    box-shadow: 1px 1px 15px #91aeb1;
+    // background-color: #00000070;
+    width: 80%;
+    &__title {
+        font-size: 30px;
+    }
+    &__form-change-link {
+        font-size: 20px;
+        text-decoration: underline;
+    }
+}
