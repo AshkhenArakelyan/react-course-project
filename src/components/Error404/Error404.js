@@ -1,10 +1,12 @@
-import React from 'react'
+import React from 'react';
+
+import './Error404.scss';
 
 const Error404 = () => {
     return (
-        <div>
-            <h1>404</h1>
-            <h2>Page not found</h2>
+        <div className="app-error-page">
+            <h1 className="app-error-page__404">404</h1>
+            <h2 className="app-error-page__title">Page not found</h2>
         </div>
     )
 }

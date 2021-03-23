@@ -1,20 +1,21 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { setUser } from 'store/actions/app';
 
-import { Button } from '@material-ui/core';
-import Input from 'components/Input/Input';
-
-import './Signup.scss'
 import fbService from 'api/fbService';
+
+import { validateEmail, validatePassword, validateName } from 'utils/validation';
+
+import Input from 'components/Input/Input';
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage';
 
-import { validateEmail, validatePassword } from 'utils/validation';
-import { AppContext } from 'context/AppContext';
-import { actionTypes } from 'context/actionTypes';
+import { Button } from '@material-ui/core';
 
-const Signup = () => {
+import './Signup.scss'
+
+const Signup = (props) => {
     const history = useHistory();
-    const context = useContext(AppContext)
     const [credentials, setCredentials] = useState({
         name: '',
         email: '',
@@ -46,17 +47,18 @@ const Signup = () => {
             setErrorState({
                 passwordError: "Password can't contain less then 6 characters",
             });
+          }else if (!validateName(credentials.name)) {
+            setErrorState({
+                nameError: "Name field is required!",
+            });
           } else {
                 try{
                     setLoading(true);
                     const user = await fbService.signup(credentials);
-                    console.log(user)
-                    console.log('Success:', user);
-                    context.dispatch({type: actionTypes.SET_USER, payload: {user} });
+                    props.setUser(user);
                     localStorage.setItem('user', JSON.stringify(user));
                     history.push('/profile');
                 } catch(err) {
-                    console.log('error:' + err);
                     setErrorState({
                         nameError: err.message,
                         emailError: err.message,
@@ -77,6 +79,7 @@ const Signup = () => {
                 className="app-auth-signup__input"
                 loading={loading}
             />
+            <ErrorMessage text={errorState.nameError}/>
             <Input 
                 name="email"
                 value={credentials.email}
@@ -95,15 +98,28 @@ const Signup = () => {
                 loading={loading}
                 type="password"
             />
-            <ErrorMessage text={errorState.passwordError}/>
-            <Button 
-                onClick={handleSignup} 
-                variant="contained"
-                color="primary"
-                disabled={loading}
-            >Signup</Button>
+            <ErrorMessage text={errorState.passwordError}/> 
+            <div className="app-auth-signup__button">
+                <Button 
+                    onClick={handleSignup} 
+                    variant="contained"
+                    color="primary"
+                    disabled={loading}
+                >Signup</Button>
+            </div>
         </div>
     )
 }
+const mapStateToProps = state => {
+    return {
+        user: state.app.user,
+    }
+}
 
-export default Signup
+const mapDispatchToProps = dispatch => {
+    return {
+        setUser: (user) => dispatch(setUser(user))
+    }
+} 
+
+export default connect(mapStateToProps, mapDispatchToProps)(Signup);

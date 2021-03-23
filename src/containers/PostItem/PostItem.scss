@@ -1,3 +1,14 @@
 .app-post-item {
     margin: 20px 0;
+    .app-post {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: baseline;
+        width: 80%;
+        
+        &__title {
+            font-size: 30px;
+        }
+    }
 }

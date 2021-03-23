@@ -1,21 +1,19 @@
 import React, { Component } from 'react';
-import { Modal, Button } from '@material-ui/core';
+import { connect } from 'react-redux';
+import { updatePost } from '../../store/actions/app';
 
 import service from 'api/service';
+import fbService from 'api/fbService';
+
 import Post from 'components/Post/Post';
 
-import './PostItem.scss';
-import loadingGif from 'assets/loading.gif';
-import fbService from 'api/fbService';
-import { actionTypes } from 'context/actionTypes';
-import { AppContext } from 'context/AppContext';
 import PostModal from 'components/PostModal/PostModal';
-
+import loadingGif from 'assets/loading.gif';
+import './PostItem.scss';
 
 class PostItem extends Component {
     constructor(props) {
         super(props);
-        console.log(props.match.params.postId);
         this.state = {
             postItem: null,
             isModalOpen: false,
@@ -23,7 +21,6 @@ class PostItem extends Component {
             bodyValue: '',
         }
     }
-    static contextType = AppContext
 
     componentDidMount() {
         service.getPost(this.props.match.params.postId)
@@ -62,9 +59,9 @@ class PostItem extends Component {
                 postItem: updatedPost,
                 isModalOpen: false
             });
-            const {state: {posts}} = this.context;
-            if(posts && posts.find(el => el.id === this.state.post.id)) {
-                this.context.dispatch({type: actionTypes.UPDATE_POST, payload: {post: updatedPost}})
+
+            if(this.props.posts && this.props.posts.find(el => el.id === this.props.posts.id)) {
+                this.props.updatePost(updatedPost)
             }
         })
     }
@@ -88,7 +85,7 @@ class PostItem extends Component {
         } 
          return (
             <div className="app-post-item">
-                <Post post={postItem} edit={this.toggleModal}/>
+                <Post post={postItem} edit={this.toggleModal} user={this.props.user} />
                 <PostModal 
                     action={this.savePost}
                     bodyValue={bodyValue}
@@ -104,4 +101,17 @@ class PostItem extends Component {
     }
 }
 
-export default PostItem
+const mapStateToProps = state => {
+    return {
+        posts: state.app.posts,
+        user: state.app.user,
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        updatePost: (posts) => dispatch(updatePost(posts)),
+    }
+} 
+
+export default connect(mapStateToProps, mapDispatchToProps)(PostItem);

@@ -1,37 +1,38 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom'
+
+import { withRouter } from 'react-router-dom';
+
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Button } from '@material-ui/core';
 
 import Link from 'components/Link/Link';
-import { AppContext } from 'context/AppContext';
+
 import './Post.scss';
 
-const Post = ({ post, className = '', link = false, edit = () => {}, remove = () =>{} }) => {
+const Post = (props) => {
+    const { post, className = '', link = false, edit = () => {}, remove = () =>{}, user } = props;
     const removeHandler = (e) => {
         e.preventDefault();
         remove();
     }
-    const Wrapper =({ children }) => {
-        const context = useContext(AppContext);
 
-        const postClassName = `app-post ${className}`;
+    const Wrapper =({ children }) => {
+        const postClassName=`app-post ${className}`;
         return link ?
         <Link to={`/posts/${post.id}`} className={postClassName}>
             {children}
-            { context.state.user ? 
+            { user ? 
                 <Button variant="contained" className="app-posts__delete-button" onClick={removeHandler}>
                     <DeleteIcon />
                 </Button> :
                 null
             }
-            
         </Link> :
         <div className={postClassName}>
             {children}
-            { context.state.user ? 
+            { user ? 
             <Button variant="contained" color="primary" onClick={edit}>
                 <EditIcon />
             </Button> :
@@ -40,8 +41,10 @@ const Post = ({ post, className = '', link = false, edit = () => {}, remove = ()
     }
     return (
         <Wrapper>
-            <h2 className="app-post__title">{post.title}</h2>
-            <h5 className="app-post__body">{post.body}</h5>
+            <div className="app-post__text">
+                <h2 className="app-post__title">{post.title}</h2>
+                <h5 className="app-post__body">{post.body}</h5>
+            </div>
         </Wrapper>
     )
 }
