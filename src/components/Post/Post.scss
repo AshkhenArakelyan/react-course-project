@@ -1,14 +1,24 @@
 @import '~styles/root';
 
 .app-post {
+    &__text {
+        width: 75%;
+    }
     &__title {
         color: $primary-color;
         font-weight: bold;
         font-size: $h2-font-size;
+        margin-bottom: 20px;
+        font-family: Roboto;
+        line-height: 1.5;
+
     }
     &__body {
-        color: $secondary-color;
         font-size: $h5-font-size;
+        font-family: Roboto;
+        font-size: 18px;
+        color: #1b1b1b;
+        line-height: 1.5;
     }
     
 }

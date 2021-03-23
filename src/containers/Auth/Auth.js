@@ -5,13 +5,8 @@ import Signup from './Signup/Signup';
 import './Auth.scss';
 
 const Auth = () => {
-    const context = useContext(AppContext);
     const [isLogin, setIsLogin] = useState(false);
 
-    useEffect(() => {
-    console.log('context:', context)
-       
-    })
     const toggleView = () => {
         setIsLogin(!isLogin);
     }
@@ -21,7 +16,7 @@ const Auth = () => {
             {isLogin ?
             <Login/>:
             <Signup/>}
-            <h3 className="app-auth__form-change-link" onClick={toggleView}>{isLogin ? "Have't account yet? Sign up" : "Already regidtered? Login"}</h3>
+            <h3 className="app-auth__form-change-link" onClick={toggleView}>{isLogin ? "Haven't account yet? Sign up" : "Already registered? Login"}</h3>
         </div>
     )
 }

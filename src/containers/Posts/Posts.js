@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { setPosts, createPost, loadMorePosts } from '../../store/actions/app';
+
+import fbService from 'api/fbService';
 
 import Post from 'components/Post/Post';
-import service from 'api/service';
-
-import './Posts.scss';
-
-import { Button } from '@material-ui/core';
+import PostModal from 'components/PostModal/PostModal';
 
 import loadingGif from 'assets/loading.gif';
-import fbService from 'api/fbService';
-import { AppContext } from 'context/AppContext';
-import { actionTypes } from 'context/actionTypes';
-import PostModal from 'components/PostModal/PostModal';
+import { Button } from '@material-ui/core';
+import './Posts.scss'; 
 
 class Posts extends Component {
     limit = 3;
@@ -24,15 +22,19 @@ class Posts extends Component {
         bodyValue: '',
     }
 
-    static contextType = AppContext
-
     componentDidMount() {
-        if(!this.context.state.posts) {
+        if(!this.props.posts) {
             fbService.getPosts(this.state.start, this.limit)
             .then(data => {
-                this.context.dispatch({type: actionTypes.SET_POSTS, payload: { posts: data }})
+                this.props.setPosts(data);
+                if(data.length < this.limit) {
+                    this.setState({
+                        hasMore: false
+                    })
+                }
             })
         }
+        
     }
     getPost = () => {
         fbService.getPost()
@@ -46,7 +48,7 @@ class Posts extends Component {
         })
     }
     updatePost = () => {
-        service.updatePost(1, { title: 'Updated Title' })
+        fbService.updatePost()
         .then(resJson => {
             const newPost = this.state.posts.map(elem => {
                 if(elem.id === resJson.id) {
@@ -68,53 +70,39 @@ class Posts extends Component {
         }
         fbService.createPost(createdPost)
         .then(data => {
-            this.context.dispatch({
-                type: actionTypes.CREATE_POST,
-                payload: {post: data}
-            })
+            this.props.createPost(data)
             this.toggleModal();
         })
     }
     
-    deletePost = (id) => {
-        service.deletePost(id)
-        .then(data => {
-            this.setState({
-                posts: this.state.posts.filter((el) => {
-                    return el.id !== id;
-                })
-            })
-        })
-    }
     loadMore = () => {
         const newStart = this.state.start + this.limit + 1;
         this.setState({
             start: newStart,
             loading: true
-        })
-        fbService.getPosts(newStart, newStart+this.limit)
-        .then(data => {            
-            const newLimit = this.limit + 1;
-            this.context.dispatch({type: actionTypes.LOAD_MORE_POSTS, payload: {posts: data}})
+        }, 
+        () => 
+        fbService.getPosts(this.state.start, newStart+this.limit)
+        .then(data => {          
+            const newLimit = this.limit;
+            this.props.loadMorePosts(data)
             this.setState({
-                hasMore: data.length < newLimit ? false : true,
+                hasMore: data.length < this.limit ? false : true,
                 loading: false
             })
         })
         .catch(err => {
-
-        })
+            this.setState({
+                hasMore: false,
+                loading: false
+            })
+        }))
     }
 
     removePost = (id) => {
         fbService.removePost(id)
         .then(data => {
-            console.log(data);
-            console.log(id);
-            this.setState({
-                posts: data
-            })
-
+            this.props.setPosts(data)
         })
     }
     toggleModal = () => {
@@ -135,11 +123,7 @@ class Posts extends Component {
     }
     render() {
         const { loading, hasMore, isModalOpen, bodyValue, titleValue} = this.state;
-        const { state: {posts} } = this.context
-        return (
-        <AppContext.Consumer>
-            {context => {
-                const {state: {posts} } = context;
+                const { posts, user } = this.props
                 return (
                     <div className="app-posts">
                         {posts ? 
@@ -153,15 +137,25 @@ class Posts extends Component {
                                                         className="app-posts__container__post"
                                                         link={true}
                                                         remove={() => this.removePost(post.id)}
+                                                        user={user}
                                                     />
                                         })
                                     }
                                 </div> 
-                                {hasMore ?  <Button variant="contained" onClick={this.loadMore} disabled={loading}>{loading ? <img src={loadingGif} alt="loading-gif" className="button-loading" /> :'Load more'}</Button>: null}
+                                {hasMore ?
+                                    <div className="app-posts__button-container">
+                                        <Button className="app-posts__button" variant="contained" onClick={this.loadMore} disabled={loading}>
+                                            {loading ? <img src={loadingGif} alt="loading-gif" className="button-loading" /> :'Load more'}
+                                        </Button>
+                                    </div>
+                                   :
+                                null}
                             </div> :
                             <img src={loadingGif} alt="loading-gif" className="app-posts__loading-image" />
                         }
-                        <Button variant="contained" onClick={this.toggleModal}>Create Post</Button>
+                        <div className="app-posts__create">
+                            <Button className="app-posts__button" variant="contained" onClick={this.toggleModal}>Create Post</Button>
+                        </div>
                         <PostModal 
                             action={this.createPost}
                             bodyValue={bodyValue}
@@ -173,11 +167,24 @@ class Posts extends Component {
                             buttonTitle="Create"
                         />
                     </div>
-                )
-            }}
-        </AppContext.Consumer>
-        )
+                )    
     }
 }
 
-export default Posts;
+const mapStateToProps = state => {
+    return {
+        user: state.app.user,
+        posts: state.app.posts,
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setPosts: (posts) => dispatch(setPosts(posts)),
+        createPost: (postData) => dispatch(createPost(postData)),
+        loadMorePosts: (data) => dispatch(loadMorePosts(data))
+    }
+} 
+
+export default connect(mapStateToProps, mapDispatchToProps)(Posts);
+

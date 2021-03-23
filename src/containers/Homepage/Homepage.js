@@ -1,22 +1,17 @@
 import React from 'react';
 
-import postMockup from 'data-mockup/postMockup'
-import fbService from 'api/fbService';
+import './Homepage.scss';
 
 class Homepage extends React.Component {
-
-    // componentDidMount() {
-        // fbService.initializePosts();
-    //     fetch('https://react-course-project-5add1-default-rtdb.firebaseio.com/posts.json', {
-    //         method: 'PUT',
-    //         body: JSON.stringify(postMockup.map(el => ({...el, id: el.id-1 })))
-    //     })
-    //     .then(res => res.json())
-    //     .then(resJson => console.log(resJson))
-    // }
     render () {
         return (
-            <h1>Homepage</h1>
+            <div className="app-homepage" >
+                <div className="app-homepage__welcome-text">
+                    <h1 className="app-homepage__welcome-text__welcome">Welcome</h1>
+                    <h2 className="app-homepage__welcome-text__site-description">In this page you can create your own blog and to do list</h2>
+                </div>
+                
+            </div>
         )
     }
 }

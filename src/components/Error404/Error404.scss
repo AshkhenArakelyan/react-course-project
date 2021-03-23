@@ -1,0 +1,18 @@
+.app-error-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    &__404 {
+        font-size: 200px;
+        color: #991c46;
+        margin-bottom: 30px;
+        font-family: Roboto;
+    }
+    &__title {
+        color: #991c46;
+        text-transform: uppercase;
+        font-size: 50px;
+        font-family: Roboto;
+    }
+}

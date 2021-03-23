@@ -1,0 +1,32 @@
+.app-homepage {
+    position: relative;
+    background-image: url(https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500);
+    height: 70vh;
+    background-repeat: no-repeat;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    &__welcome-text {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        background-color: #0000003d;
+
+        &__welcome, &__site-description {
+            color: #fff;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-family: 'ROBOTO';
+        }
+        &__welcome {
+            font-size: 50px;
+            margin-bottom: 30px;
+        }
+        &__site-description {
+            font-size: 35px;
+        }
+    }
+}

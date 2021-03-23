@@ -1,10 +1,9 @@
 import React from 'react';
-import Modal from '@material-ui/core/Modal';
-import { Button } from '@material-ui/core';
-import PropTypes, { string } from 'prop-types';
+import PropTypes from 'prop-types';
+
+import { Button, Modal } from '@material-ui/core';
 
 import './PostModal.scss';
-
 
 const PostModal = ({
     isOpen,
@@ -22,8 +21,8 @@ const PostModal = ({
             onClose={onClose}
             className="app-modal">
             <div className="app-modal__inner">
-                <input value={titleValue} onChange={changeTitle}/><br/>
-                <input value={bodyValue} onChange={changeBody}/>
+                <input className="app-modal__inner__input" value={titleValue} onChange={changeTitle}/>
+                <input className="app-modal__inner__input" value={bodyValue} onChange={changeBody}/>
                 <Button variant="contained" color="primary" onClick={action} title={buttonTitle}>
                     {buttonTitle}
                 </Button>

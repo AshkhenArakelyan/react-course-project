@@ -1,6 +1,11 @@
-import { actionTypes } from './actionTypes'
+import { actionTypes } from '../types/app'
 
-const appReducer = (state, action) => {
+export const initialState = {
+    user: JSON.parse(localStorage.getItem('user')) || null,
+    posts: null
+}
+
+const appReducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.SET_USER:
             return {
@@ -11,15 +16,13 @@ const appReducer = (state, action) => {
             return {
                 ...state,
                 user: null
-            } 
+            }
         case actionTypes.SET_POSTS:
-            console.log(action);
             return {
                 ...state,
                 posts: action.payload.posts
             }
         case actionTypes.LOAD_MORE_POSTS:
-            console.log(action);
             return {
                 ...state,
                 posts: [ ...state.posts , ...action.payload.posts]
@@ -46,10 +49,3 @@ const appReducer = (state, action) => {
     }
 }
 export default appReducer;
-
-// Action = {
-    // type
-    // payload: {
-        // user
-    // }
-// }
